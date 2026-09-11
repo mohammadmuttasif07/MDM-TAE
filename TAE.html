@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TechFest 2026 — The Future Starts Here</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#0A0E1A',
+          panel: '#121826',
+          panel2: '#161D2E',
+          amber: '#F5B700',
+          cyan: '#46E0C6',
+          paper: '#EDEFF4',
+          muted: '#8891A3',
+          line: 'rgba(237,239,244,0.12)'
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace']
+        }
+      }
+    }
+  }
+</script>
+<style>
+  :root {
+    --ink: #0A0E1A;
+    --panel: #121826;
+    --line: rgba(237,239,244,0.12);
+    --amber: #F5B700;
+    --cyan: #46E0C6;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    background-color: var(--ink);
+    color: #EDEFF4;
+    font-family: 'Space Grotesk', sans-serif;
+    background-image:
+      radial-gradient(circle, rgba(237,239,244,0.07) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* Schematic bracket-corner box */
+  .bracket {
+    position: relative;
+    border: 1px solid var(--line);
+  }
+  .bracket::before, .bracket::after,
+  .bracket .bl::before, .bracket .br::before {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-color: var(--amber);
+    transition: border-color .25s ease;
+  }
+  .bracket::before { top: -1px; left: -1px; border-top: 2px solid var(--amber); border-left: 2px solid var(--amber); }
+  .bracket::after { top: -1px; right: -1px; border-top: 2px solid var(--amber); border-right: 2px solid var(--amber); }
+  .bracket .bl::before { bottom: -1px; left: -1px; border-bottom: 2px solid var(--amber); border-left: 2px solid var(--amber); }
+  .bracket .br::before { bottom: -1px; right: -1px; border-bottom: 2px solid var(--amber); border-right: 2px solid var(--amber); }
+
+  .bracket-cyan::before, .bracket-cyan::after,
+  .bracket-cyan .bl::before, .bracket-cyan .br::before { border-color: var(--cyan) !important; }
+
+  .trace {
+    position: relative;
+  }
+  .trace::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent, var(--line) 15%, var(--line) 85%, transparent);
+  }
+
+  .btn-primary {
+    background: var(--amber);
+    color: #0A0E1A;
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px -8px rgba(245,183,0,0.5);
+  }
+  .btn-ghost {
+    border: 1px solid var(--line);
+    color: #EDEFF4;
+    transition: border-color .2s ease, color .2s ease;
+  }
+  .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
+
+  .field {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--line);
+    color: #EDEFF4;
+    transition: border-color .2s ease;
+  }
+  .field:focus { outline: none; border-bottom-color: var(--amber); }
+  .field::placeholder { color: #576078; }
+
+  #rsvpModal { transition: opacity .25s ease; }
+  #rsvpModal.hidden-modal { opacity: 0; pointer-events: none; }
+  #rsvpPanel { transition: transform .3s ease, opacity .3s ease; }
+  #rsvpModal.hidden-modal #rsvpPanel { transform: translateY(16px); opacity: 0; }
+
+  .cat-card { transition: border-color .25s ease, transform .25s ease; }
+  .cat-card:hover { border-color: var(--cyan); transform: translateY(-4px); }
+
+  .progress-track { background: var(--panel2); border: 1px solid var(--line); }
+  .progress-fill { background: linear-gradient(90deg, var(--cyan), var(--amber)); transition: width 1.4s cubic-bezier(.16,1,.3,1); }
+
+  .num-anim { transition: color .3s ease; }
+
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body class="antialiased">
+
+<!-- ===== NAV ===== -->
+<nav class="sticky top-0 z-40 bg-ink/90 backdrop-blur border-b border-line">
+  <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <span class="w-2 h-2 bg-amber inline-block"></span>
+      <span class="font-mono text-sm tracking-wide">TECHFEST 2026</span>
+    </div>
+    <div class="hidden md:flex items-center gap-8 text-sm text-muted font-mono">
+      <a href="#home" class="hover:text-paper transition-colors">Home</a>
+      <a href="#events" class="hover:text-paper transition-colors">Events</a>
+      <a href="#schedule" class="hover:text-paper transition-colors">Schedule</a>
+      <a href="#speakers" class="hover:text-paper transition-colors">Speakers</a>
+      <button onclick="openModal()" class="btn-ghost px-4 py-1.5 text-paper">RSVP</button>
+    </div>
+    <button id="menuBtn" class="md:hidden text-paper" aria-label="Open menu" aria-expanded="false">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M2 6h18M2 11h18M2 16h18" stroke="currentColor" stroke-width="1.5"/></svg>
+    </button>
+  </div>
+  <div id="mobileMenu" class="hidden md:hidden border-t border-line px-6 py-4 flex flex-col gap-4 font-mono text-sm bg-ink">
+    <a href="#home" class="text-muted">Home</a>
+    <a href="#events" class="text-muted">Events</a>
+    <a href="#schedule" class="text-muted">Schedule</a>
+    <a href="#speakers" class="text-muted">Speakers</a>
+    <button onclick="openModal()" class="btn-ghost px-4 py-2 text-left">RSVP now</button>
+  </div>
+</nav>
+
+<!-- ===== HERO / COUNTDOWN ===== -->
+<header id="home" class="max-w-6xl mx-auto px-6 pt-16 pb-20 md:pt-24 md:pb-28">
+  <div class="grid md:grid-cols-12 gap-10 items-end">
+    <div class="md:col-span-7 trace pl-6">
+      <p class="mono text-xs text-cyan mb-5">25.10.2026 — COLLEGE MAIN CAMPUS</p>
+      <h1 class="font-display font-semibold leading-[0.95] text-4xl sm:text-5xl lg:text-6xl">
+        The future starts<br/>with what you build<br/>this weekend.
+      </h1>
+      <p class="mt-6 text-muted max-w-md">
+        TechFest 2026 brings coders, builders and makers together for two days of contests, talks and shipping real things — not slideshows.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <button onclick="openModal()" class="btn-primary px-6 py-3 font-mono text-sm font-medium">Reserve a seat</button>
+        <a href="#events" class="btn-ghost px-6 py-3 font-mono text-sm">See the events</a>
+      </div>
+    </div>
+
+    <div class="md:col-span-5">
+      <p class="mono text-xs text-muted mb-3">TIME UNTIL DOORS OPEN</p>
+      <div id="countdownWrap" class="grid grid-cols-4 gap-2 sm:gap-3">
+        <div class="bracket bg-panel py-4 sm:py-6 text-center"><span class="bl"></span><span class="br"></span>
+          <div id="cd-days" class="mono text-2xl sm:text-4xl font-semibold text-paper">00</div>
+          <div class="mono text-[10px] sm:text-xs text-muted mt-1">DAYS</div>
+        </div>
+        <div class="bracket bg-panel py-4 sm:py-6 text-center"><span class="bl"></span><span class="br"></span>
+          <div id="cd-hours" class="mono text-2xl sm:text-4xl font-semibold text-paper">00</div>
+          <div class="mono text-[10px] sm:text-xs text-muted mt-1">HOURS</div>
+        </div>
+        <div class="bracket bg-panel py-4 sm:py-6 text-center"><span class="bl"></span><span class="br"></span>
+          <div id="cd-mins" class="mono text-2xl sm:text-4xl font-semibold text-paper">00</div>
+          <div class="mono text-[10px] sm:text-xs text-muted mt-1">MIN</div>
+        </div>
+        <div class="bracket bracket-cyan bg-panel py-4 sm:py-6 text-center"><span class="bl"></span><span class="br"></span>
+          <div id="cd-secs" class="mono text-2xl sm:text-4xl font-semibold text-cyan">00</div>
+          <div class="mono text-[10px] sm:text-xs text-muted mt-1">SEC</div>
+        </div>
+      </div>
+      <p id="cd-done" class="hidden mono text-sm text-amber mt-4">The event has started — see you on campus.</p>
+
+      <div class="mt-8">
+        <div class="flex justify-between mono text-xs text-muted mb-2">
+          <span>REGISTRATION</span>
+          <span><span id="regCount">0</span> / 1000 SEATS</span>
+        </div>
+        <div class="progress-track h-2 w-full">
+          <div id="progressFill" class="progress-fill h-full" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-16 flex flex-wrap gap-x-8 gap-y-2 mono text-xs text-muted border-t border-line pt-6">
+    <span>CODING</span><span class="text-line">/</span>
+    <span>AI</span><span class="text-line">/</span>
+    <span>ROBOTICS</span><span class="text-line">/</span>
+    <span>GAMING</span><span class="text-line">/</span>
+    <span>HACKATHON</span><span class="text-line">/</span>
+    <span>UI·UX</span>
+  </div>
+</header>
+
+<!-- ===== EVENT CATEGORIES ===== -->
+<section id="events" class="max-w-6xl mx-auto px-6 py-20 border-t border-line">
+  <div class="mb-10">
+    <h2 class="font-display text-3xl font-semibold">Pick your track</h2>
+    <p class="text-muted mt-2 max-w-md">Six tracks, one weekend. Register for as many as you can handle.</p>
+  </div>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div class="cat-card bracket bg-panel p-6"><span class="bl"></span><span class="br"></span>
+      <p class="mono text-xs text-cyan mb-3">01</p>
+      <h3 class="font-display text-lg font-medium">Coding Contest</h3>
+      <p class="text-muted text-sm mt-2">Timed algorithmic rounds, solo entry.</p>
+    </div>
+    <div class="cat-card bracket bg-panel p-6"><span class="bl"></span><span class="br"></span>
+      <p class="mono text-xs text-cyan mb-3">02</p>
+      <h3 class="font-display text-lg font-medium">Robotics</h3>
+      <p class="text-muted text-sm mt-2">Build and race an autonomous bot.</p>
+    </div>
+    <div class="cat-card bracket bg-panel p-6"><span class="bl"></span><span class="br"></span>
+      <p class="mono text-xs text-cyan mb-3">03</p>
+      <h3 class="font-display text-lg font-medium">AI Challenge</h3>
+      <p class="text-muted text-sm mt-2">Train a model against a hidden dataset.</p>
+    </div>
+    <div class="cat-card bracket bg-panel p-6"><span class="bl"></span><span class="br"></span>
+      <p class="mono text-xs text-cyan mb-3">04</p>
+      <h3 class="font-display text-lg font-medium">Gaming</h3>
+      <p class="text-muted text-sm mt-2">Bracket-style tournament, teams of four.</p>
+    </div>
+    <div class="cat-card bracket bg-panel p-6"><span class="bl"></span><span class="br"></span>
+      <p class="mono text-xs text-cyan mb-3">05</p>
+      <h3 class="font-display text-lg font-medium">Hackathon</h3>
+      <p class="text-muted text-sm mt-2">24 hours, one working prototype.</p>
+    </div>
+    <div class="cat-card bracket bg-panel p-6"><span class="bl"></span><span class="br"></span>
+      <p class="mono text-xs text-cyan mb-3">06</p>
+      <h3 class="font-display text-lg font-medium">UI/UX Challenge</h3>
+      <p class="text-muted text-sm mt-2">Redesign a real brief in three hours.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WHY ATTEND ===== -->
+<section class="max-w-6xl mx-auto px-6 py-20 border-t border-line">
+  <h2 class="font-display text-3xl font-semibold mb-10">Why show up</h2>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-line">
+    <div class="bg-ink p-6">
+      <p class="mono text-xs text-amber mb-3">PRIZES</p>
+      <p class="text-sm text-muted">Cash and hardware across every track.</p>
+    </div>
+    <div class="bg-ink p-6">
+      <p class="mono text-xs text-amber mb-3">MENTORS</p>
+      <p class="text-sm text-muted">Engineers from product teams judge your work.</p>
+    </div>
+    <div class="bg-ink p-6">
+      <p class="mono text-xs text-amber mb-3">NETWORK</p>
+      <p class="text-sm text-muted">Meet the people you'll actually build with later.</p>
+    </div>
+    <div class="bg-ink p-6">
+      <p class="mono text-xs text-amber mb-3">PROOF</p>
+      <p class="text-sm text-muted">Certificates and a shipped project for your portfolio.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRIZE POOL ===== -->
+<section class="max-w-6xl mx-auto px-6 py-20 border-t border-line">
+  <div class="grid md:grid-cols-12 gap-10 items-center">
+    <div class="md:col-span-5">
+      <p class="mono text-xs text-muted mb-3">TOTAL PRIZE POOL</p>
+      <p id="prizeTotal" class="font-display text-5xl sm:text-6xl font-semibold text-amber">₹0</p>
+      <p class="text-muted mt-3 text-sm">Across all six tracks, paid directly to winning teams.</p>
+    </div>
+    <div class="md:col-span-7 grid grid-cols-3 gap-3">
+      <div class="bracket bg-panel p-5 text-center"><span class="bl"></span><span class="br"></span>
+        <p class="mono text-xs text-muted mb-2">1ST</p>
+        <p class="font-display font-semibold text-lg sm:text-xl">₹50,000</p>
+      </div>
+      <div class="bracket bg-panel p-5 text-center"><span class="bl"></span><span class="br"></span>
+        <p class="mono text-xs text-muted mb-2">2ND</p>
+        <p class="font-display font-semibold text-lg sm:text-xl">₹30,000</p>
+      </div>
+      <div class="bracket bg-panel p-5 text-center"><span class="bl"></span><span class="br"></span>
+        <p class="mono text-xs text-muted mb-2">3RD</p>
+        <p class="font-display font-semibold text-lg sm:text-xl">₹20,000</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SCHEDULE ===== -->
+<section id="schedule" class="max-w-6xl mx-auto px-6 py-20 border-t border-line">
+  <h2 class="font-display text-3xl font-semibold mb-10">Two days, roughly</h2>
+  <div class="divide-y divide-line border-t border-b border-line">
+    <div class="grid grid-cols-12 py-4 gap-4 items-baseline">
+      <span class="col-span-3 sm:col-span-2 mono text-xs text-cyan">DAY 1 · 9:00</span>
+      <span class="col-span-9 sm:col-span-10 text-sm sm:text-base">Registration desk opens, opening keynote</span>
+    </div>
+    <div class="grid grid-cols-12 py-4 gap-4 items-baseline">
+      <span class="col-span-3 sm:col-span-2 mono text-xs text-cyan">DAY 1 · 11:00</span>
+      <span class="col-span-9 sm:col-span-10 text-sm sm:text-base">Coding contest &amp; AI challenge begin</span>
+    </div>
+    <div class="grid grid-cols-12 py-4 gap-4 items-baseline">
+      <span class="col-span-3 sm:col-span-2 mono text-xs text-cyan">DAY 1 · 18:00</span>
+      <span class="col-span-9 sm:col-span-10 text-sm sm:text-base">Hackathon kicks off — 24 hour clock starts</span>
+    </div>
+    <div class="grid grid-cols-12 py-4 gap-4 items-baseline">
+      <span class="col-span-3 sm:col-span-2 mono text-xs text-cyan">DAY 2 · 10:00</span>
+      <span class="col-span-9 sm:col-span-10 text-sm sm:text-base">Robotics arena &amp; gaming bracket rounds</span>
+    </div>
+    <div class="grid grid-cols-12 py-4 gap-4 items-baseline">
+      <span class="col-span-3 sm:col-span-2 mono text-xs text-cyan">DAY 2 · 18:00</span>
+      <span class="col-span-9 sm:col-span-10 text-sm sm:text-base">Hackathon submissions close, judging begins</span>
+    </div>
+    <div class="grid grid-cols-12 py-4 gap-4 items-baseline">
+      <span class="col-span-3 sm:col-span-2 mono text-xs text-cyan">DAY 2 · 20:00</span>
+      <span class="col-span-9 sm:col-span-10 text-sm sm:text-base">Awards &amp; closing</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SPEAKERS ===== -->
+<section id="speakers" class="max-w-6xl mx-auto px-6 py-20 border-t border-line">
+  <h2 class="font-display text-3xl font-semibold mb-10">On stage</h2>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="bracket bg-panel p-6"><span class="bl"></span><span class="br"></span>
+      <div class="w-14 h-14 bg-panel2 border border-line mb-4"></div>
+      <h3 class="font-display text-lg font-medium">Dr. A. Kumar</h3>
+      <p class="mono text-xs text-muted mt-1">AI RESEARCHER</p>
+    </div>
+    <div class="bracket bg-panel p-6"><span class="bl"></span><span class="br"></span>
+      <div class="w-14 h-14 bg-panel2 border border-line mb-4"></div>
+      <h3 class="font-display text-lg font-medium">Riya Sen</h3>
+      <p class="mono text-xs text-muted mt-1">ROBOTICS LEAD, ORBIT LABS</p>
+    </div>
+    <div class="bracket bg-panel p-6"><span class="bl"></span><span class="br"></span>
+      <div class="w-14 h-14 bg-panel2 border border-line mb-4"></div>
+      <h3 class="font-display text-lg font-medium">Devraj Iyer</h3>
+      <p class="mono text-xs text-muted mt-1">FOUNDING ENGINEER, STACKFORGE</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CLOSING CTA ===== -->
+<section class="max-w-6xl mx-auto px-6 py-24 border-t border-line text-center">
+  <h2 class="font-display text-3xl sm:text-4xl font-semibold max-w-xl mx-auto">Seats are limited to 1000. Claim yours before the countdown ends.</h2>
+  <button onclick="openModal()" class="btn-primary mt-8 px-8 py-3.5 font-mono text-sm font-medium">Reserve a seat</button>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="border-t border-line">
+  <div class="max-w-6xl mx-auto px-6 py-10 flex flex-col sm:flex-row justify-between gap-4 mono text-xs text-muted">
+    <span>TECHFEST 2026 — MAIN CAMPUS, 25 OCT 2026</span>
+    <span>BUILT FOR THE ORGANISING COMMITTEE</span>
+  </div>
+</footer>
+
+<!-- ===== RSVP MODAL ===== -->
+<div id="rsvpModal" class="hidden-modal fixed inset-0 z-50 flex items-center justify-center px-6" style="background:rgba(10,14,26,0.85)">
+  <div id="rsvpPanel" class="bracket bg-panel w-full max-w-md p-8 relative"><span class="bl"></span><span class="br"></span>
+    <button onclick="closeModal()" aria-label="Close" class="absolute top-4 right-4 text-muted hover:text-paper">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 2l14 14M16 2L2 16" stroke="currentColor" stroke-width="1.5"/></svg>
+    </button>
+    <p class="mono text-xs text-cyan mb-2">RSVP</p>
+    <h3 class="font-display text-2xl font-semibold mb-6">Save your seat</h3>
+
+    <form id="rsvpForm" class="space-y-5" novalidate>
+      <div>
+        <label for="rsvpName" class="mono text-xs text-muted block mb-1">NAME</label>
+        <input id="rsvpName" type="text" class="field w-full py-2 text-sm" placeholder="Full name" required />
+        <p class="err hidden text-amber text-xs mt-1">Enter your name.</p>
+      </div>
+      <div>
+        <label for="rsvpEmail" class="mono text-xs text-muted block mb-1">EMAIL</label>
+        <input id="rsvpEmail" type="email" class="field w-full py-2 text-sm" placeholder="you@college.edu" required />
+        <p class="err hidden text-amber text-xs mt-1">Enter a valid email.</p>
+      </div>
+      <div>
+        <label for="rsvpEvent" class="mono text-xs text-muted block mb-1">EVENT</label>
+        <select id="rsvpEvent" class="field w-full py-2 text-sm" required>
+          <option value="" disabled selected>Select a track</option>
+          <option>Coding Contest</option>
+          <option>Robotics</option>
+          <option>AI Challenge</option>
+          <option>Gaming</option>
+          <option>Hackathon</option>
+          <option>UI/UX Challenge</option>
+        </select>
+      </div>
+      <button type="submit" class="btn-primary w-full py-3 font-mono text-sm font-medium mt-2">Confirm RSVP</button>
+      <p id="rsvpSuccess" class="hidden mono text-xs text-cyan text-center pt-1">You're in. Check your email for details.</p>
+    </form>
+  </div>
+</div>
+
+<script>
+  /* ---------- Countdown ---------- */
+  const eventDate = new Date('2026-10-25T09:00:00');
+  const doneMsg = document.getElementById('cd-done');
+  const wrap = document.getElementById('countdownWrap');
+
+  function tickCountdown() {
+    const now = new Date();
+    let diff = eventDate - now;
+    if (diff <= 0) {
+      wrap.classList.add('hidden');
+      doneMsg.classList.remove('hidden');
+      clearInterval(timer);
+      return;
+    }
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const m = Math.floor((diff / (1000 * 60)) % 60);
+    const s = Math.floor((diff / 1000) % 60);
+    document.getElementById('cd-days').textContent = String(d).padStart(2, '0');
+    document.getElementById('cd-hours').textContent = String(h).padStart(2, '0');
+    document.getElementById('cd-mins').textContent = String(m).padStart(2, '0');
+    document.getElementById('cd-secs').textContent = String(s).padStart(2, '0');
+  }
+  tickCountdown();
+  const timer = setInterval(tickCountdown, 1000);
+
+  /* ---------- Registration progress ---------- */
+  const seatsRegistered = 850;
+  const seatsTotal = 1000;
+  const regCountEl = document.getElementById('regCount');
+  const fill = document.getElementById('progressFill');
+
+  window.addEventListener('load', () => {
+    fill.style.width = ((seatsRegistered / seatsTotal) * 100) + '%';
+    let n = 0;
+    const step = Math.max(1, Math.floor(seatsRegistered / 60));
+    const counter = setInterval(() => {
+      n += step;
+      if (n >= seatsRegistered) { n = seatsRegistered; clearInterval(counter); }
+      regCountEl.textContent = n;
+    }, 20);
+  });
+
+  /* ---------- Prize pool count-up ---------- */
+  const prizeEl = document.getElementById('prizeTotal');
+  window.addEventListener('load', () => {
+    const target = 100000;
+    let n = 0;
+    const step = Math.ceil(target / 60);
+    const counter = setInterval(() => {
+      n += step;
+      if (n >= target) { n = target; clearInterval(counter); }
+      prizeEl.textContent = '₹' + n.toLocaleString('en-IN') + '+';
+    }, 20);
+  });
+
+  /* ---------- Mobile menu ---------- */
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  menuBtn.addEventListener('click', () => {
+    const isHidden = mobileMenu.classList.contains('hidden');
+    mobileMenu.classList.toggle('hidden');
+    menuBtn.setAttribute('aria-expanded', String(isHidden));
+  });
+  mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+
+  /* ---------- RSVP modal ---------- */
+  const modal = document.getElementById('rsvpModal');
+  function openModal() {
+    modal.classList.remove('hidden-modal');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('rsvpName').focus();
+  }
+  function closeModal() {
+    modal.classList.add('hidden-modal');
+    document.body.style.overflow = '';
+  }
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+  /* ---------- Form validation ---------- */
+  const form = document.getElementById('rsvpForm');
+  const successMsg = document.getElementById('rsvpSuccess');
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('rsvpName');
+    const email = document.getElementById('rsvpEmail');
+    const evt = document.getElementById('rsvpEvent');
+    let valid = true;
+
+    const nameErr = name.parentElement.querySelector('.err');
+    if (!name.value.trim()) { nameErr.classList.remove('hidden'); valid = false; }
+    else { nameErr.classList.add('hidden'); }
+
+    const emailErr = email.parentElement.querySelector('.err');
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
+    if (!emailOk) { emailErr.classList.remove('hidden'); valid = false; }
+    else { emailErr.classList.add('hidden'); }
+
+    if (!evt.value) { valid = false; evt.classList.add('field'); }
+
+    if (!valid) return;
+
+    successMsg.classList.remove('hidden');
+    form.querySelectorAll('input, select, button[type=submit]').forEach(el => el.disabled = true);
+    setTimeout(() => {
+      closeModal();
+      form.reset();
+      successMsg.classList.add('hidden');
+      form.querySelectorAll('input, select, button[type=submit]').forEach(el => el.disabled = false);
+    }, 1800);
+  });
+</script>
+</body>
+</html>
